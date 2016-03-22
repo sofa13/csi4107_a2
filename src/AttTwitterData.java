@@ -14,6 +14,7 @@ import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.converters.ArffSaver;
  
  /**
   * Generates a little ARFF file with different attribute types.
@@ -48,7 +49,7 @@ import weka.core.Instances;
      data = new Instances("opinion", atts, 0);
  
      // 3. fill with data
-     File file = new File("src/semeval_twitter_data.txt");
+     File file = new File("./data/semeval_twitter_data.txt");
      try(BufferedReader br = new BufferedReader(new FileReader(file))) {
     	    for(String line; (line = br.readLine()) != null; ) {
     	        // process the line.
@@ -63,11 +64,13 @@ import weka.core.Instances;
     	    }
     	}
  
-     PrintWriter writer = new PrintWriter("src/semeval_twitter_data_arff.txt", "UTF-8");
-     PrintWriter writerARFF = new PrintWriter("src/semeval_twitter_data.arff", "UTF-8");
+     PrintWriter writer = new PrintWriter("./data/semeval_twitter_data_arff.txt", "UTF-8");
      writer.println(data);
-     writerARFF.println(data);
      writer.close();
-     writerARFF.close();
+     
+     ArffSaver saver = new ArffSaver();
+     saver.setInstances(data);
+     saver.setFile(new File("./data/semeval_twitter_data.arff"));
+     saver.writeBatch();
    }
  }
