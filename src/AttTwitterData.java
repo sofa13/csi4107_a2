@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -47,10 +48,7 @@ import weka.core.Instances;
      data = new Instances("opinion", atts, 0);
  
      // 3. fill with data
-//     URL url = AttTwitterData.class.getResource("semeval_twitter_data.txt");
-//     File file = new File(url.getPath());
-     int num = 0;
-     File file = new File("C:/Users/Sophie/Desktop/semeval_twitter_data.txt");
+     File file = new File("src/semeval_twitter_data.txt");
      try(BufferedReader br = new BufferedReader(new FileReader(file))) {
     	    for(String line; (line = br.readLine()) != null; ) {
     	        // process the line.
@@ -62,15 +60,14 @@ import weka.core.Instances;
     	    	vals[1] = attVals.indexOf(s.next().replace("\"", ""));
     	    	vals[0] = data.attribute(0).addStringValue(s.next());
     	        data.add(new Instance(1.0, vals));
-    	        num++;
-    	        if(num > 100) break;
     	    }
     	}
-
-     System.out.println(data);
  
-//     FileOutputStream out = new FileOutputStream("C:/Users/Sophie/Desktop/MyRelation.arff");
-//     out.write(data);
-//     out.close();
+     PrintWriter writer = new PrintWriter("src/semeval_twitter_data_arff.txt", "UTF-8");
+     PrintWriter writerARFF = new PrintWriter("src/semeval_twitter_data.arff", "UTF-8");
+     writer.println(data);
+     writerARFF.println(data);
+     writer.close();
+     writerARFF.close();
    }
  }
