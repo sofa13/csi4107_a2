@@ -59,7 +59,7 @@ public class AttTwitterData {
 				opinionMap.put(tweetID, opinion);
 
 				for (String word : words) {
-					String wordCompare = word.replaceAll("[^a-zA-z]", "");
+					String wordCompare = word.replaceAll("[^a-zA-z!?]", "");
 					wordCompare = wordCompare.toLowerCase();
 					if (!stopWordsSet.contains(wordCompare)
 							&& !wordCompare.isEmpty()) {
@@ -80,7 +80,7 @@ public class AttTwitterData {
 		Iterator it = vocabulary.entrySet().iterator();
 		while (it.hasNext()) {
 			HashMap.Entry w = (HashMap.Entry) it.next();
-			if ((int) w.getValue() < 100) {
+			if ((int) w.getValue() < 10) {
 				it.remove();
 			} else {
 				vocabVector.add((String) w.getKey());
@@ -100,7 +100,7 @@ public class AttTwitterData {
 				HashMap<String, Integer> wordsMap = new HashMap<String, Integer>();
 
 				for (String word : words) {
-					String wordCompare = word.replaceAll("[^a-zA-z]", "");
+					String wordCompare = word.replaceAll("[^a-zA-z!?]", "");
 					wordCompare = wordCompare.toLowerCase();
 					if (vocabulary.containsKey(wordCompare)) {
 						Integer count = wordsMap.get(wordCompare);
