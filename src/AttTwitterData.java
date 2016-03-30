@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import weka.core.Attribute;
 import weka.core.FastVector;
@@ -29,7 +30,8 @@ public class AttTwitterData {
 		FastVector attVals;
 		FastVector attEx;
 		FastVector attQu;
-		FastVector attEm;
+		FastVector attHEM;
+		FastVector attSEM;
 		Instances instance;
 		double[] vals;
 		Set<String> stopWordsSet = new HashSet<String>();
@@ -40,7 +42,8 @@ public class AttTwitterData {
 		HashMap<String, String> opinionMap = new HashMap<String, String>();
 		HashMap<String, Boolean> exclamationMap = new HashMap<String, Boolean>();
 		HashMap<String, Boolean> questionMap = new HashMap<String, Boolean>();
-		HashMap<String, Boolean> emoticonMap = new HashMap<String, Boolean>();
+		HashMap<String, Boolean> happyEmoteMap = new HashMap<String, Boolean>();
+		HashMap<String, Boolean> sadEmoteMap = new HashMap<String, Boolean>();
 		HashMap<String, Integer> posMap = new HashMap<String, Integer>();
 		HashMap<String, Integer> negMap = new HashMap<String, Integer>();
 		Vector<String> vocabVector = new Vector<String>();
@@ -80,6 +83,9 @@ public class AttTwitterData {
 		// Build vocabulary, removing stopwords, and punctuation
 		// Extract features: exclamation mark, question mark, emoticons
 		File file = new File("./data/semeval_twitter_data.txt");
+		Pattern happyEmotes = Pattern.compile(".*(:\\)|;\\)|\\(:|\\(;|♥|♡|☺).*");
+		Pattern sadEmotes = Pattern.compile(".*(:\\(|;\\(|\\):|\\);|\\>:\\||\\|:\\<|:@).*");
+		
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			for (String line; (line = br.readLine()) != null;) {
 				@SuppressWarnings("resource")
@@ -92,8 +98,8 @@ public class AttTwitterData {
 				opinionMap.put(tweetID, opinion);
 				exclamationMap.put(tweetID, sentence.contains("!"));
 				questionMap.put(tweetID, sentence.contains("?"));
-				emoticonMap.put(tweetID, sentence.contains(":)") || sentence.contains("(:") || sentence.contains("(;")|| sentence.contains(";)"));
-				
+				happyEmoteMap.put(tweetID, happyEmotes.matcher(sentence).matches());
+				sadEmoteMap.put(tweetID, sadEmotes.matcher(sentence).matches());
 				String[] words = sentence.split(" ");
 
 				for (String word : words) {
@@ -207,10 +213,14 @@ public class AttTwitterData {
 		atts.addElement(new Attribute("QuestionMark", attQu));
 		
 		// - nominal
-		attEm = new FastVector();
-		attEm.addElement("Y");
-		attEm.addElement("N");
-		atts.addElement(new Attribute("PositiveEmiticon", attEm));
+		attHEM = new FastVector();
+		attHEM.addElement("Y");
+		attHEM.addElement("N");
+		attSEM = new FastVector();
+		attSEM.addElement("Y");
+		attSEM.addElement("N");
+		atts.addElement(new Attribute("PositiveEmoticon", attHEM));
+		atts.addElement(new Attribute("NegativeEmoticon", attSEM));
 		
 		// - numeric
 		atts.addElement(new Attribute("PositiveWords"));
@@ -229,48 +239,62 @@ public class AttTwitterData {
 		// 3. fill with data
 		for (String key : bagOfWords.keySet()) {
 			vals = new double[instance.numAttributes()];
+			int index = 0;
 			
 			Map<String, Integer> sentence = bagOfWords.get(key);
 			
 			// set nominal opinion attribute
-			vals[0] = attVals.indexOf(opinionMap.get(key));
+			vals[index] = attVals.indexOf(opinionMap.get(key));
+			index++;
 			
 			// set nominal exclamation mark attribute
 			if (exclamationMap.get(key)) {
-				vals[1] = attEx.indexOf("Y");
+				vals[index] = attEx.indexOf("Y");
 			} else {
-				vals[1] = attEx.indexOf("N");
+				vals[index] = attEx.indexOf("N");
 			}
+			index++;
 
 			// set nominal question mark attribute
 			if (questionMap.get(key)) {
-				vals[2] = attQu.indexOf("Y");
+				vals[index] = attQu.indexOf("Y");
 			} else {
-				vals[2] = attQu.indexOf("N");
+				vals[index] = attQu.indexOf("N");
 			}
+			index++;
 
-			// set nominal emoticon attribute
-			if (emoticonMap.get(key)) {
-				vals[3] = attEm.indexOf("Y");
+			// set nominal happy emoticon attribute
+			if (happyEmoteMap.get(key)) {
+				vals[index] = attHEM.indexOf("Y");
 			} else {
-				vals[3] = attEm.indexOf("N");
+				vals[index] = attHEM.indexOf("N");
 			}
+			index++;
+			
+			// set nominal sad emoticon attribute
+			if (sadEmoteMap.get(key)) {
+				vals[index] = attSEM.indexOf("Y");
+			} else {
+				vals[index] = attSEM.indexOf("N");
+			}			
+			index++;
 			
 			// set numerical # positive words attribute
 			if(posMap.get(key) == null)
-				vals[4] = 0;
+				vals[index] = 0;
 			else
-				vals[4] = posMap.get(key);
+				vals[index] = posMap.get(key);
+			index++;
 			
 			// set numerical # negative words attribute
 			if(negMap.get(key) == null)
-				vals[5] = 0;
+				vals[index] = 0;
 			else
-				vals[5] = negMap.get(key);
+				vals[index] = negMap.get(key);
+			index++;
 			
 			// set numerical word attributes
-			int x = 6; // set as one more than above
-			for (int i = x; i < vocabVector.size(); i++) {
+			for (int i = index; i < vocabVector.size(); i++) {
 				if (sentence.containsKey(vocabVector.get(i))) {
 					vals[i] = sentence.get(vocabVector.get(i));
 				} else {
