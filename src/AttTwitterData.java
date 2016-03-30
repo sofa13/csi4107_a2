@@ -78,6 +78,7 @@ public class AttTwitterData {
 		System.out.println("Build vocabulary");
 
 		// Build vocabulary, removing stopwords, and punctuation
+		// Extract features: exclamation mark, question mark, emoticons
 		File file = new File("./data/semeval_twitter_data.txt");
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			for (String line; (line = br.readLine()) != null;) {
@@ -129,6 +130,7 @@ public class AttTwitterData {
 		System.out.println("Build bag of words");
 		
 		// Build bag of words for each tweet { tweetID: { word : {count} }}
+		// Extract features: number of positive and negative words
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			for (String line; (line = br.readLine()) != null;) {
 				@SuppressWarnings("resource")
@@ -282,11 +284,6 @@ public class AttTwitterData {
 		System.out.println("Write to file");
 		
 		// Write to files
-
-//		PrintWriter writer = new PrintWriter(
-//				"./data/semeval_twitter_data_arff.txt", "UTF-8");
-//		writer.println(instance);
-//		writer.close();
 
 		ArffSaver saver = new ArffSaver();
 		saver.setInstances(instance);
