@@ -1,0 +1,5 @@
+.classpath
+*.class
+.metadata
+bin
+data/semeval_twitter_data.arff
