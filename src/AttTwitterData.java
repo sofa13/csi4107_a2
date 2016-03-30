@@ -126,7 +126,7 @@ public class AttTwitterData {
 		Iterator it = vocabulary.entrySet().iterator();
 		while (it.hasNext()) {
 			HashMap.Entry w = (HashMap.Entry) it.next();
-			if ((int) w.getValue() < 10) {
+			if ((int) w.getValue() < 5) {
 				it.remove();
 			} else {
 				vocabVector.add((String) w.getKey());
