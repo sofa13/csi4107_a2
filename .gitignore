@@ -1,4 +1,5 @@
 .classpath
+node_modules
 *.class
 .metadata
 bin

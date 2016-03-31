@@ -25,13 +25,10 @@ public class AttTwitterData {
 	public static void main(String[] args) throws Exception {
 		
 		System.out.println("Running");
+		SentiWordAnalyser sentiwords = new SentiWordAnalyser("sentiword.txt");
 
 		FastVector atts;
 		FastVector attVals;
-		FastVector attEx;
-		FastVector attQu;
-		FastVector attHEM;
-		FastVector attSEM;
 		Instances instance;
 		double[] vals;
 		Set<String> stopWordsSet = new HashSet<String>();
@@ -40,12 +37,10 @@ public class AttTwitterData {
 		Map<String, Map<String, Integer>> bagOfWords = new HashMap<String, Map<String, Integer>>();
 		HashMap<String, Integer> vocabulary = new HashMap<String, Integer>();
 		HashMap<String, String> opinionMap = new HashMap<String, String>();
-		HashMap<String, Boolean> exclamationMap = new HashMap<String, Boolean>();
-		HashMap<String, Boolean> questionMap = new HashMap<String, Boolean>();
-		HashMap<String, Boolean> happyEmoteMap = new HashMap<String, Boolean>();
-		HashMap<String, Boolean> sadEmoteMap = new HashMap<String, Boolean>();
-		HashMap<String, Integer> posMap = new HashMap<String, Integer>();
-		HashMap<String, Integer> negMap = new HashMap<String, Integer>();
+		HashMap<String, Double> posMap = new HashMap<String, Double>();
+		HashMap<String, Double> negMap = new HashMap<String, Double>();
+		HashMap<String, Double> objectivityMap = new HashMap<String, Double>();
+
 		Vector<String> vocabVector = new Vector<String>();
 
 		System.out.println("Build set of stopwords, positive words, and negative words");
@@ -83,8 +78,6 @@ public class AttTwitterData {
 		// Build vocabulary, removing stopwords, and punctuation
 		// Extract features: exclamation mark, question mark, emoticons
 		File file = new File("./data/semeval_twitter_data.txt");
-		Pattern happyEmotes = Pattern.compile(".*(:\\)|;\\)|\\(:|\\(;|♥|♡|☺).*");
-		Pattern sadEmotes = Pattern.compile(".*(:\\(|;\\(|\\):|\\);|\\>:\\||\\|:\\<|:@).*");
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			for (String line; (line = br.readLine()) != null;) {
@@ -96,10 +89,12 @@ public class AttTwitterData {
 				String sentence = s.next();
 
 				opinionMap.put(tweetID, opinion);
-				exclamationMap.put(tweetID, sentence.contains("!"));
-				questionMap.put(tweetID, sentence.contains("?"));
-				happyEmoteMap.put(tweetID, happyEmotes.matcher(sentence).matches());
-				sadEmoteMap.put(tweetID, sadEmotes.matcher(sentence).matches());
+				
+				SentiWordAnalyser.SentiWord sentenceSentiment = sentiwords.analyzeSentence(sentence);
+				posMap.put(tweetID, sentenceSentiment.getPositive());
+				negMap.put(tweetID, sentenceSentiment.getNegative());
+				objectivityMap.put(tweetID, sentenceSentiment.getObjective());
+			
 				String[] words = sentence.split(" ");
 
 				for (String word : words) {
@@ -160,24 +155,6 @@ public class AttTwitterData {
 							count++;
 							wordsMap.put(wordCompare, count);
 						}
-						
-						if(positiveSet.contains(wordCompare))
-						{
-							Integer countPos = posMap.get(tweetID);
-							if(countPos == null) countPos = 1;
-							else countPos++;
-							
-							posMap.put(tweetID,countPos);
-						}
-						
-						if(negativeSet.contains(wordCompare))
-						{
-							Integer countNeg = negMap.get(tweetID);
-							if(countNeg == null) countNeg = 1;
-							else countNeg++;
-							
-							negMap.put(tweetID,countNeg);
-						}
 					}
 				}
 
@@ -199,34 +176,13 @@ public class AttTwitterData {
 		attVals.addElement("neutral");
 		attVals.addElement("objective");
 		atts.addElement(new Attribute("OpinionCategory", attVals));
-		
-		// - nominal
-		attEx = new FastVector();
-		attEx.addElement("Y");
-		attEx.addElement("N");
-		atts.addElement(new Attribute("ExclamationMark", attEx));
-		
-		// - nominal
-		attQu = new FastVector();
-		attQu.addElement("Y");
-		attQu.addElement("N");
-		atts.addElement(new Attribute("QuestionMark", attQu));
-		
-		// - nominal
-		attHEM = new FastVector();
-		attHEM.addElement("Y");
-		attHEM.addElement("N");
-		attSEM = new FastVector();
-		attSEM.addElement("Y");
-		attSEM.addElement("N");
-		atts.addElement(new Attribute("PositiveEmoticon", attHEM));
-		atts.addElement(new Attribute("NegativeEmoticon", attSEM));
-		
+
 		// - numeric
-		atts.addElement(new Attribute("PositiveWords"));
-		
+		atts.addElement(new Attribute("Positivity"));
 		// - numeric
-		atts.addElement(new Attribute("NegativeWords"));
+		atts.addElement(new Attribute("Negativity"));
+		
+		atts.addElement(new Attribute("Objectivity"));
 		
 		// - numeric
 		for (String word : vocabVector) {
@@ -247,50 +203,15 @@ public class AttTwitterData {
 			vals[index] = attVals.indexOf(opinionMap.get(key));
 			index++;
 			
-			// set nominal exclamation mark attribute
-			if (exclamationMap.get(key)) {
-				vals[index] = attEx.indexOf("Y");
-			} else {
-				vals[index] = attEx.indexOf("N");
-			}
-			index++;
-
-			// set nominal question mark attribute
-			if (questionMap.get(key)) {
-				vals[index] = attQu.indexOf("Y");
-			} else {
-				vals[index] = attQu.indexOf("N");
-			}
-			index++;
-
-			// set nominal happy emoticon attribute
-			if (happyEmoteMap.get(key)) {
-				vals[index] = attHEM.indexOf("Y");
-			} else {
-				vals[index] = attHEM.indexOf("N");
-			}
-			index++;
-			
-			// set nominal sad emoticon attribute
-			if (sadEmoteMap.get(key)) {
-				vals[index] = attSEM.indexOf("Y");
-			} else {
-				vals[index] = attSEM.indexOf("N");
-			}			
-			index++;
-			
 			// set numerical # positive words attribute
-			if(posMap.get(key) == null)
-				vals[index] = 0;
-			else
-				vals[index] = posMap.get(key);
+			vals[index] = posMap.get(key);
 			index++;
 			
 			// set numerical # negative words attribute
-			if(negMap.get(key) == null)
-				vals[index] = 0;
-			else
-				vals[index] = negMap.get(key);
+			vals[index] = negMap.get(key);
+			index++;
+
+			vals[index] = objectivityMap.get(key);
 			index++;
 			
 			// set numerical word attributes
@@ -315,5 +236,15 @@ public class AttTwitterData {
 		saver.writeBatch();
 		
 		System.out.println("Complete");
+	}
+	
+	private static int countOccurences(String haystack, char needle) {
+		int counter = 0;
+		for (int i = 0; i < haystack.length(); i++ ) {
+		    if (haystack.charAt(i) == needle) {
+		        counter++;
+		    }
+		}
+		return counter;
 	}
 }
