@@ -30,6 +30,7 @@ public class AttTwitterData {
 		FastVector attVals;
 		FastVector attEx;
 		FastVector attQu;
+		FastVector attHa;
 		FastVector attHEM;
 		FastVector attSEM;
 		Instances instance;
@@ -42,6 +43,7 @@ public class AttTwitterData {
 		HashMap<String, String> opinionMap = new HashMap<String, String>();
 		HashMap<String, Boolean> exclamationMap = new HashMap<String, Boolean>();
 		HashMap<String, Boolean> questionMap = new HashMap<String, Boolean>();
+		HashMap<String, Boolean> hashtagMap = new HashMap<String, Boolean>();
 		HashMap<String, Boolean> happyEmoteMap = new HashMap<String, Boolean>();
 		HashMap<String, Boolean> sadEmoteMap = new HashMap<String, Boolean>();
 		HashMap<String, Integer> posMap = new HashMap<String, Integer>();
@@ -98,6 +100,7 @@ public class AttTwitterData {
 				opinionMap.put(tweetID, opinion);
 				exclamationMap.put(tweetID, sentence.contains("!"));
 				questionMap.put(tweetID, sentence.contains("?"));
+				hashtagMap.put(tweetID, sentence.contains("#"));
 				happyEmoteMap.put(tweetID, happyEmotes.matcher(sentence).matches());
 				sadEmoteMap.put(tweetID, sadEmotes.matcher(sentence).matches());
 				String[] words = sentence.split(" ");
@@ -106,7 +109,7 @@ public class AttTwitterData {
 					String wordCompare = word.replaceAll("[^a-zA-z]", "");
 					wordCompare = wordCompare.toLowerCase();
 					if (!stopWordsSet.contains(wordCompare)
-							&& !wordCompare.isEmpty()) {
+							&& !wordCompare.isEmpty() && wordCompare.length()>3) {
 						Integer count = vocabulary.get(wordCompare);
 						if (count == null) {
 							vocabulary.put(wordCompare, new Integer(1));
@@ -126,7 +129,7 @@ public class AttTwitterData {
 		Iterator it = vocabulary.entrySet().iterator();
 		while (it.hasNext()) {
 			HashMap.Entry w = (HashMap.Entry) it.next();
-			if ((int) w.getValue() < 5) {
+			if ((int) w.getValue() < 3) {
 				it.remove();
 			} else {
 				vocabVector.add((String) w.getKey());
@@ -213,6 +216,12 @@ public class AttTwitterData {
 		atts.addElement(new Attribute("QuestionMark", attQu));
 		
 		// - nominal
+		attHa = new FastVector();
+		attHa.addElement("Y");
+		attHa.addElement("N");
+		atts.addElement(new Attribute("HashTag", attHa));
+		
+		// - nominal
 		attHEM = new FastVector();
 		attHEM.addElement("Y");
 		attHEM.addElement("N");
@@ -260,6 +269,14 @@ public class AttTwitterData {
 				vals[index] = attQu.indexOf("Y");
 			} else {
 				vals[index] = attQu.indexOf("N");
+			}
+			index++;
+			
+			// set nominal question mark attribute
+			if (hashtagMap.get(key)) {
+				vals[index] = attHa.indexOf("Y");
+			} else {
+				vals[index] = attHa.indexOf("N");
 			}
 			index++;
 
@@ -311,7 +328,7 @@ public class AttTwitterData {
 
 		ArffSaver saver = new ArffSaver();
 		saver.setInstances(instance);
-		saver.setFile(new File("./data/semeval_twitter_data.arff"));
+		saver.setFile(new File("C:/Users/Sophie/Desktop/semeval_twitter_data.arff"));
 		saver.writeBatch();
 		
 		System.out.println("Complete");
