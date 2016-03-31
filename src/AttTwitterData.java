@@ -109,7 +109,7 @@ public class AttTwitterData {
 					String wordCompare = word.replaceAll("[^a-zA-z]", "");
 					wordCompare = wordCompare.toLowerCase();
 					if (!stopWordsSet.contains(wordCompare)
-							&& !wordCompare.isEmpty() && wordCompare.length()>3) {
+							&& !wordCompare.isEmpty() && wordCompare.length()>2) {
 						Integer count = vocabulary.get(wordCompare);
 						if (count == null) {
 							vocabulary.put(wordCompare, new Integer(1));
