@@ -19,8 +19,8 @@ public class SentiWordAnalyser {
 		
 		SentiWord(String word, double positive, double negative) {
 			this.word = word;
-			this.positive = positive;
-			this.negative = negative;
+			this.positive = Math.abs(positive);
+			this.negative = Math.abs(negative);
 			this.length = word.split(" ").length;
 		}
 		
@@ -33,8 +33,12 @@ public class SentiWordAnalyser {
 		}
 		
 		public double getObjective() {
-			double denominator = Math.max(Math.abs(positive + negative), 1);
-			return 1.0 - (Math.max(positive, negative) / denominator);
+			double emotional = Math.min(positive + negative, 1.00);
+			return 1.0 - emotional;
+		}
+		public double getNeutrality() {
+			if (positive == 0 && negative == 0) return 1;
+			return Math.abs(positive - negative) / Math.max(positive, negative);
 		}
 		
 		public int length() {

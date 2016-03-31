@@ -40,6 +40,7 @@ public class AttTwitterData {
 		HashMap<String, Double> posMap = new HashMap<String, Double>();
 		HashMap<String, Double> negMap = new HashMap<String, Double>();
 		HashMap<String, Double> objectivityMap = new HashMap<String, Double>();
+		HashMap<String, Double> neutralityMap = new HashMap<String, Double>();
 
 		Vector<String> vocabVector = new Vector<String>();
 
@@ -94,6 +95,7 @@ public class AttTwitterData {
 				posMap.put(tweetID, sentenceSentiment.getPositive());
 				negMap.put(tweetID, sentenceSentiment.getNegative());
 				objectivityMap.put(tweetID, sentenceSentiment.getObjective());
+				neutralityMap.put(tweetID, sentenceSentiment.getNeutrality());
 			
 				String[] words = sentence.split(" ");
 
@@ -184,6 +186,8 @@ public class AttTwitterData {
 		
 		atts.addElement(new Attribute("Objectivity"));
 		
+		atts.addElement(new Attribute("Neutrality"));
+		
 		// - numeric
 		for (String word : vocabVector) {
 			atts.addElement(new Attribute(word));
@@ -212,6 +216,9 @@ public class AttTwitterData {
 			index++;
 
 			vals[index] = objectivityMap.get(key);
+			index++;
+			
+			vals[index] = neutralityMap.get(key);
 			index++;
 			
 			// set numerical word attributes
