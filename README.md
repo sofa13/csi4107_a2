@@ -12,13 +12,13 @@ To implement a program that extracts features from the tweets and saves them in 
 
 Sophie worked on researching and setting up the basics of creating the arff file. This involved setting up the first feature extraction using the words from the tweets as features in the arff file. After, Sophie expanded the features and added positive emoticons, punctuation marks such as ! and ?, hash tags, and the number of positive and negative words using the LIWC external resource.
 
-Ted worked on greatly improving and optimizing the existing feature extractions, and worked on other feature extractions, such as negative emoticons and hashtags. Ted also included the use of the SentiWord, an external resources that includes list of positive and negative words.
+Ted worked on improving and optimizing the existing feature extractions, and worked on other feature extractions, such as negative emoticons and hashtags. Ted also included the use of the SentiWord, an external resources that includes list of positive and negative words. Ted also spent a lot of time experimenting with different features and refactoring code.
 
 Both team members worked on evaluating the best classifier using Weka and on writing up documentation.
 
 ## Functionality of our program
 
-The purpose of this assignment is to classify tweeter messages as expressing a positive opinion, a negative opinion, or no opinion (neutral or objective). To do so we wrote a program that extracts features from the tweets and saves them in an .arff file. Then we used a tool named Weka, opened the arff file in Weka’s GUI, and ran machine learning algorithms that were appropriate for our task.
+The purpose of this assignment is to classify Twitter messages as expressing a positive opinion, a negative opinion, or no opinion (neutral or objective). To do so we wrote a program that extracts features from the tweets and saves them in an .arff file. Then we used a tool named Weka, opened the arff file in Weka’s GUI, and ran machine learning algorithms that were appropriate for our task.
 
 Our program does the following to extract features from the tweets:
 
@@ -46,7 +46,9 @@ Our program does the following to extract features from the tweets:
 
 ## Running our program
 
-The following are complete instructions on how to run our program to extract features from the tweets.
+Just run `java csi4107.AttTwitterData` with `weka-3-6-13.jar` in your class path. It will generate `data/semeval_twitter_data.arff`, which you can open with Weka. Then, you can run the classifications.
+
+## Customization Process
 
 ## Step 1
 
@@ -68,17 +70,23 @@ To get classification results, we applied three classifiers from Weka:
 - and Decision Trees (J48 in Weka)
 
 The Naive Bayes classification method and the following feature representation led to the **best results**:
-- ...
+
+- 50.4048% correct
 
 This gives the following number of attributes:
 
-Our best results for each message can be viewed in the `Results.txt` file.
+Our best results for each message can be viewed in the `Results(TYPE).txt` files.
 
 The following are feature extractions we tried and that did not help:
-- Using SentiWordNet external resource to analyze sentence sentiment
+
+- Using SentiWordNet external resource to analyze sentence sentiment for words and phrases
 - Tweet length
 - Counting the number of ! and ? vs just the presence of them
 - Including words in the vocabulary with hashtags
-- All-caps
+- All-caps words
 - Repeated letters such as "yayyyy"
 - heart emoticons
+
+## Conclusion
+
+We had a lot of trouble working through different methods, most things lowered our accuracy. Particularly, the more accurate we tried to be, the less percentage in the result. We suspect that part of the reason is that there's a differentiation between neutrality and objectivity, which our application doesn't handle very well. It would also be nice to be able to determine more about the results of Weka.
