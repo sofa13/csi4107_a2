@@ -10,7 +10,7 @@ Sophie Le Page - 5992312
 
 To implement a program that extracts features from the tweets and saves them in an arff file, we did peer programming outside of class and in class, and we did individual programming. To collaborate and manage our code, we used a GitHub repository.
 
-Sophie worked on researching and setting up the basics of creating the arff file. This involved setting up the first feature extraction using the words from the tweets as features in the arff file. After, Sophie expanded the features and added positive emoticons, punctuation marks such as ! and ?, and the number of positive and negative words using the General Inquirer external resource.
+Sophie worked on researching and setting up the basics of creating the arff file. This involved setting up the first feature extraction using the words from the tweets as features in the arff file. After, Sophie expanded the features and added positive emoticons, punctuation marks such as ! and ?, hash tags, and the number of positive and negative words using the LIWC external resource.
 
 Ted worked on greatly improving and optimizing the existing feature extractions, and worked on other feature extractions, such as negative emoticons and hashtags. Ted also included the use of the SentiWord, an external resources that includes list of positive and negative words.
 
@@ -22,7 +22,7 @@ The purpose of this assignment is to classify tweeter messages as expressing a p
 
 Our program does the following to extract features from the tweets:
 
-1. Builds a set of [stopwords](http://www.site.uottawa.ca/~diana/csi5180/StopWords), positive words and negative words. The [General Inquirer](http://www.site.uottawa.ca/~diana/csi4107/A2_2016.htm) and [SentiWordNet](http://sentiwordnet.isti.cnr.it/) external resource were used to obtain a list of positive and negative words.
+1. Builds a set of [stopwords](http://www.site.uottawa.ca/~diana/csi5180/StopWords), positive words and negative words. The [LIWC](http://www.site.uottawa.ca/~diana/csi4107/A2_2016.htm) and [SentiWordNet](http://sentiwordnet.isti.cnr.it/) external resource were used to obtain a list of positive and negative words.
 
 2. Builds the vocabulary of the [data](http://www.site.uottawa.ca/~diana/csi4107/semeval_twitter_data.txt) and removes stopwords and punctuation. While building the vocabulary we also keep track of the word occurrences, and extract the following features: exclamation marks, question marks, and emoticons.
 
@@ -36,7 +36,8 @@ Our program does the following to extract features from the tweets:
   3. Question Mark {Y,N}
   4. Positive Emoticon {Y,N}
   5. Negative Emoticon {Y,N}
-  6. Positive Words numeric slightly favouring positive
+  7. Hash Tags {Y,N}
+  6. Positive Words numeric (slightly favoring positive)
   7. Negative Words numeric
   8. word1 numeric
   9. word2 numeric...
@@ -49,23 +50,35 @@ The following are complete instructions on how to run our program to extract fea
 
 ## Step 1
 
-For step 1 we trained a classifier using the bag-of-words (BOW) representation. This means we used words from the tweets as features in the arff file. We eliminated stop words, rare words, and punctuation, in order to reduce the dimension of the vector space. We built the arff file with your own program.
+For step 1 we trained a classifier using the bag-of-words (BOW) representation. This means we used words from the tweets as features in the arff file. We eliminated stop words, rare words, and punctuation, in order to reduce the dimension of the vector space. To do this we built the arff file with your own program.
 
 We used an evaluation technique called 10-fold cross validation, available in Weka, and then applied three classifiers from Weka: SVM (SMO in Weka), Naive Bayes, and Decision Trees (J48 in Weka).
 
 ## Step 2
 
-For step 2 we added more features and trained the same classifiers in order to try to improve the classification results. We added the use of emoticons from the texts as features, and punctuation marks such as ! and ?. We also added the number of positive words and negative words in the tweets as features. To get the list of positive and negative words we tried two resources: [General Inquirer](http://www.site.uottawa.ca/~diana/csi4107/A2_2016.htm) and [SentiWordNet](http://sentiwordnet.isti.cnr.it/).
+For step 2 we added more features and trained the same classifiers. We added the use of postive and negative emoticons from the tweets as features as well as punctuation marks such as ! and ?, and hash tags. We also added the number of positive words and negative words in the tweets as features. To get the list of positive and negative words we tried two resources: [LIWC](http://www.site.uottawa.ca/~diana/csi4107/A2_2016.htm) and [SentiWordNet](http://sentiwordnet.isti.cnr.it/).
 
-Again, we used an evaluation technique and classifiers as step 1.
+Again, we used the same evaluation technique and classifiers as step 1 in order to try and improve the classification results.
 
 ## Results
 
-We applied three classifiers from Weka: SVM (SMO in Weka), Naive Bayes, and Decision Trees (J48 in Weka). The classification methods Naive Bayes and the following feature representation led to the best results are as follows:
+To get classification results, we applied three classifiers from Weka:
+- SVM (SMO in Weka)
+- Naive Bayes
+- and Decision Trees (J48 in Weka)
+
+The Naive Bayes classification method and the following feature representation led to the **best results**:
 - ...
 
-Feature extractions that did not help
+This gives the following number of attributes:
+
+Our best results for each message can be viewed in the `Results.txt` file.
+
+The following are feature extractions we tried and that did not help:
 - Using SentiWordNet external resource to analyze sentence sentiment
 - Tweet length
 - Counting the number of ! and ? vs just the presence of them
 - Including words in the vocabulary with hashtags
+- All-caps
+- Repeated letters such as "yayyyy"
+- heart emoticons
