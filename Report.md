@@ -10,9 +10,9 @@ Sophie Le Page - 5992312
 
 To implement a program that extracts features from the tweets and saves them in an arff file, we did peer programming outside of class and in class, and we did individual programming. To collaborate and manage our code, we used a GitHub repository.
 
-Sophie worked on researching and setting up the basics of creating the arff file. This involved setting up the first feature extraction using the words from the tweets as features in the arff file. After, Sophie expanded the features and added emoticons, punctuation marks such as ! and ?, and the number of positive and negative words using the General Inquirer external resource.
+Sophie worked on researching and setting up the basics of creating the arff file. This involved setting up the first feature extraction using the words from the tweets as features in the arff file. After, Sophie expanded the features and added positive emoticons, punctuation marks such as ! and ?, and the number of positive and negative words using the General Inquirer external resource.
 
-Ted worked on greatly improving and optimizing the existing feature extractions, and worked on other feature extractions, such as... Ted also included the use of the SentiWord, and external resources that includes list of positive and negative words.
+Ted worked on greatly improving and optimizing the existing feature extractions, and worked on other feature extractions, such as negative emoticons and hashtags. Ted also included the use of the SentiWord, an external resources that includes list of positive and negative words.
 
 Both team members worked on evaluating the best classifier using Weka and on writing up documentation.
 
@@ -38,7 +38,7 @@ Our program does the following to extract features from the tweets:
   5. Negative Emoticon {Y,N}
   6. Positive Words numeric
   7. Negative Words numeric
-  8. word1 numeric...
+  8. word1 numeric
   9. word2 numeric...
 
 6. Writes to arff file.
@@ -57,11 +57,10 @@ We used an evaluation technique called 10-fold cross validation, available in We
 
 For step 2 we added more features and trained the same classifiers in order to try to improve the classification results. We added the use of emoticons from the texts as features, and punctuation marks such as ! and ?. We also added the number of positive words and negative words in the tweets as features. To get the list of positive and negative words we tried two resources: [General Inquirer](http://www.site.uottawa.ca/~diana/csi4107/A2_2016.htm) and [SentiWordNet](http://sentiwordnet.isti.cnr.it/).
 
-Again we used an evaluation technique called 10-fold cross validation, available in Weka, and then applied three classifiers from Weka: SVM (SMO in Weka), Naive Bayes, and Decision Trees (J48 in Weka).
+Again, we used an evaluation technique and classifiers as step 1.
 
 ## Results
 
-Discuss what classification method and feature representation led to the best results
+We applied three classifiers from Weka: SVM (SMO in Weka), Naive Bayes, and Decision Trees (J48 in Weka).
 
-- Submit your report and your best results for each message in a file Results.txt
-- Submit your assignment as a zip file, including programs, Report file, and the Result.txt file through the Blackboard Learn. Only one partner in a team needs to submit.
+The classification methods Naive Bayes and feature representation the following led to the best results are as follows:
