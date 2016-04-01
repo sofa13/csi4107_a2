@@ -36,7 +36,7 @@ Our program does the following to extract features from the tweets:
   3. Question Mark {Y,N}
   4. Positive Emoticon {Y,N}
   5. Negative Emoticon {Y,N}
-  6. Positive Words numeric
+  6. Positive Words numeric slightly favouring positive
   7. Negative Words numeric
   8. word1 numeric
   9. word2 numeric...
@@ -61,6 +61,11 @@ Again, we used an evaluation technique and classifiers as step 1.
 
 ## Results
 
-We applied three classifiers from Weka: SVM (SMO in Weka), Naive Bayes, and Decision Trees (J48 in Weka).
+We applied three classifiers from Weka: SVM (SMO in Weka), Naive Bayes, and Decision Trees (J48 in Weka). The classification methods Naive Bayes and the following feature representation led to the best results are as follows:
+- ...
 
-The classification methods Naive Bayes and feature representation the following led to the best results are as follows:
+Feature extractions that did not help
+- Using SentiWordNet external resource to analyze sentence sentiment
+- Tweet length
+- Counting the number of ! and ? vs just the presence of them
+- Including words in the vocabulary with hashtags
